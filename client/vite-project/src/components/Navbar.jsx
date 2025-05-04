@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
 const menuItems = [
   { name: 'Home', path: '/' },
@@ -11,6 +12,10 @@ const menuItems = [
 ];
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
   return (
     <motion.nav
       initial={{ y: -60, opacity: 0 }}
@@ -45,7 +50,7 @@ const Navbar = () => {
           Hyper<span className="text-orange-500">eats</span>
         </motion.div>
 
-        {/* Nav Links */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex space-x-2 font-medium text-gray-800">
           {menuItems.map((item, index) => (
             <motion.div
@@ -62,17 +67,21 @@ const Navbar = () => {
           ))}
         </div>
 
+        {/* Mobile Menu Toggle */}
+        <div className="md:hidden">
+          <button onClick={toggleMenu} className="text-3xl text-orange-500 focus:outline-none">
+            {isOpen ? <HiX /> : <HiMenuAlt3 />}
+          </button>
+        </div>
+
         {/* Right Buttons */}
-        <div className="flex items-center space-x-4">
-          {/* Cart */}
+        <div className="hidden md:flex items-center space-x-4">
           <motion.div
             whileHover={{ scale: 1.1 }}
             className="relative bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-md cursor-pointer"
           >
             Cart
           </motion.div>
-
-          {/* Login Button */}
           <Link
             to="/login"
             className="px-4 py-2 rounded-md bg-[#0f172a] text-white text-sm font-semibold hover:bg-orange-500 transition shadow-md"
@@ -81,6 +90,40 @@ const Navbar = () => {
           </Link>
         </div>
       </div>
+
+      {/* Mobile Menu Drawer */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            className="md:hidden overflow-hidden bg-white px-6 pb-4 space-y-3"
+          >
+            {menuItems.map((item, index) => (
+              <Link
+                key={index}
+                to={item.path}
+                onClick={() => setIsOpen(false)}
+                className="block text-gray-800 hover:text-orange-500 font-medium transition"
+              >
+                {item.name}
+              </Link>
+            ))}
+            <div className="mt-3 flex flex-col space-y-2">
+              <Link
+                to="/login"
+                className="w-full text-center py-2 bg-[#0f172a] text-white font-semibold rounded hover:bg-orange-500"
+              >
+                Login/Signup
+              </Link>
+              <div className="w-full text-center py-2 bg-green-600 text-white font-semibold rounded">
+                Cart
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };

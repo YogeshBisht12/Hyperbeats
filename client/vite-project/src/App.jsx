@@ -10,6 +10,9 @@ import Signup from './pages/Signup'; // ✅
 import Banner from './components/banner';
 import AboutSection from './components/AboutSection';
 import Footer from './components/Footer';
+import BrowseMenu from './pages/BrowseMenu';
+import SpecialOffers from './pages/SpecialOffers'
+import Restaurants from './pages/Restaurants';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -38,6 +41,12 @@ function App() {
         } />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> {/* ✅ Signup route */}
+        <Route path="/menu" element={<BrowseMenu />} /> {/*browse menu route*/}
+        <Route path="/offers" element={<SpecialOffers />} /> {/*special offers route*/}
+        <Route path="/restaurants" element={<Restaurants />} /> {/*special offers route*/}
+
+
+
       </Routes>
     </Router>
     

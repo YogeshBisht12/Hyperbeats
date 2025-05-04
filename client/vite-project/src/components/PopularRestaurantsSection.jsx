@@ -7,38 +7,42 @@ import burgerKing from '../assets/images/restaurants/bk.png';
 import shaurma from '../assets/images/restaurants/shaurma.png';
 
 const restaurants = [
-{ image: mcdonalds,  },
-{ image: papaJohns,  },
-{ image: kfc, },
-{ image: texasChicken,  },
-{ image: burgerKing,  },
-{ image: shaurma,  },
+  { image: mcdonalds, name: 'McDonald’s' },
+  { image: papaJohns, name: 'Papa Johns' },
+  { image: kfc, name: 'KFC' },
+  { image: texasChicken, name: 'Texas Chicken' },
+  { image: burgerKing, name: 'Burger King' },
+  { image: shaurma, name: 'Shaurma' },
 ];
 
 const PopularRestaurantsSection = () => {
-return (
-    <section className="w-full py-12 px-6 lg:px-16 bg-white">
-    <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
-        Popular Restaurants
-    </h2>
+  return (
+    <section className="w-full py-16 px-6 lg:px-20 bg-gradient-to-br from-orange-50 via-white to-orange-100">
+      <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-10">
+        🍔 Popular <span className="text-orange-500">Restaurants</span>
+      </h2>
 
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
         {restaurants.map((res, index) => (
-        <div
+          <div
             key={index}
-            className=" shadow-sm rounded-xl flex flex-col items-center justify-center p-4 hover:shadow-md hover:scale-105 transition-transform duration-300"
-        >
-            <img
-            src={res.image}
-            alt={res.name}
-            className="object-contain mb-2"
-            />
-            <p className="text-sm font-medium text-center text-gray-800">{res.name}</p>
-        </div>
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 hover:scale-105 duration-300 p-4 flex flex-col items-center"
+          >
+            <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-3">
+              <img
+                src={res.image}
+                alt={res.name}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <p className="text-sm sm:text-base font-medium text-gray-800 text-center">
+              {res.name}
+            </p>
+          </div>
         ))}
-    </div>
+      </div>
     </section>
-);
+  );
 };
 
 export default PopularRestaurantsSection;
