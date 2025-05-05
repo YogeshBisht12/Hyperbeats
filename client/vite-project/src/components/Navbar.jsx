@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
+import { FiShoppingCart } from 'react-icons/fi';
+import { useCart } from '../pages/CartContext';
+import { useAuth } from './AuthContext';
 
 const menuItems = [
   { name: 'Home', path: '/' },
@@ -13,113 +16,156 @@ const menuItems = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasShadow, setHasShadow] = useState(false);
+  const { cartItems = [] } = useCart();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const cartCount = cartItems.length;
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  useEffect(() => {
+    const handleScroll = () => setHasShadow(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <motion.nav
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="w-full bg-white shadow-sm border-b border-gray-200"
+      transition={{ duration: 0.5 }}
+      className={`fixed top-0 left-0 w-full z-50 backdrop-blur-lg bg-white/90 ${
+        hasShadow ? 'shadow-xl border-b border-orange-200' : ''
+      }`}
     >
       {/* Promo Bar */}
-      <motion.div
-        className="flex justify-between items-center text-sm text-gray-600 px-6 py-2 bg-gradient-to-r from-yellow-100 via-orange-100 to-yellow-100"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <span>
-          Get 5% Off your first order,{' '}
-          <span className="text-orange-500 font-medium">Promo: ORDERS</span>
-        </span>
-        <span>
-          <span className="mr-2">Alpha 2, Greater Noida</span>
-          <a href="#" className="text-orange-500 font-semibold hover:underline">Change Location</a>
-        </span>
-      </motion.div>
+      <div className="hidden sm:flex justify-between items-center text-base text-white px-6 py-2 bg-gradient-to-r from-pink-500 via-orange-500 to-yellow-400 font-semibold">
+        <span>🎉 5% Off on First Order — <span className="font-bold">Code: ORDERS</span></span>
+        <span>📍 Alpha 2, Greater Noida · <a href="#" className="underline hover:text-black">Change</a></span>
+      </div>
 
       {/* Main Navbar */}
       <div className="flex items-center justify-between px-6 py-4">
         {/* Logo */}
-        <motion.div
-          className="text-3xl font-extrabold text-[#1e293b]"
-          whileHover={{ scale: 1.05 }}
-        >
+        <Link to="/" className="text-4xl font-extrabold text-slate-800">
           Hyper<span className="text-orange-500">eats</span>
-        </motion.div>
+        </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-2 font-medium text-gray-800">
+        <div className="hidden md:flex space-x-6 text-lg font-semibold text-gray-700">
           {menuItems.map((item, index) => (
-            <motion.div
+            <Link
               key={index}
-              className="group relative px-4 py-2 rounded-full cursor-pointer overflow-hidden"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+              to={item.path}
+              className="relative group transition-all"
             >
-              <span className="absolute inset-0 bg-orange-500 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ease-in-out z-0"></span>
-              <Link to={item.path} className="relative z-10 group-hover:text-white transition duration-300">
+              <span className="relative z-10 group-hover:text-orange-600">
                 {item.name}
-              </Link>
-            </motion.div>
+              </span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-pink-500 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
           ))}
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Right Side */}
+        <div className="hidden md:flex items-center space-x-5">
+          <Link to="/cart" className="relative">
+            <FiShoppingCart className="text-3xl text-orange-600 hover:scale-110 transition duration-300" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-md">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+          {user ? (
+            <>
+              <span className="text-lg text-gray-700">👋 {user.name || 'User'}</span>
+              <button
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-5 py-2 rounded-md text-base font-bold hover:scale-105 shadow transition"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-5 py-2 rounded-md text-base font-bold hover:scale-105 shadow transition"
+            >
+              Login / Signup
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Toggle */}
         <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-3xl text-orange-500 focus:outline-none">
+          <button onClick={toggleMenu} className="text-4xl text-orange-500">
             {isOpen ? <HiX /> : <HiMenuAlt3 />}
           </button>
         </div>
-
-        {/* Right Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="relative bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-md cursor-pointer"
-          >
-            Cart
-          </motion.div>
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-md bg-[#0f172a] text-white text-sm font-semibold hover:bg-orange-500 transition shadow-md"
-          >
-            Login/Signup
-          </Link>
-        </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: "auto" }}
+            animate={{ height: 'auto' }}
             exit={{ height: 0 }}
-            className="md:hidden overflow-hidden bg-white px-6 pb-4 space-y-3"
+            className="md:hidden bg-white px-6 pb-4 space-y-3 border-t border-orange-200"
           >
             {menuItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className="block text-gray-800 hover:text-orange-500 font-medium transition"
+                className="block text-lg font-semibold text-gray-800 hover:text-orange-500"
               >
                 {item.name}
               </Link>
             ))}
+
             <div className="mt-3 flex flex-col space-y-2">
+              {user ? (
+                <>
+                  <span className="text-gray-700 font-medium text-lg">👋 {user.name || 'User'}</span>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center py-2 bg-purple-600 text-white font-bold rounded hover:bg-purple-700"
+                >
+                  Login / Signup
+                </Link>
+              )}
               <Link
-                to="/login"
-                className="w-full text-center py-2 bg-[#0f172a] text-white font-semibold rounded hover:bg-orange-500"
+                to="/cart"
+                className="w-full text-center py-2 bg-green-500 text-white font-bold rounded relative"
               >
-                Login/Signup
-              </Link>
-              <div className="w-full text-center py-2 bg-green-600 text-white font-semibold rounded">
                 Cart
-              </div>
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-3 -mt-1 -mr-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </div>
           </motion.div>
         )}

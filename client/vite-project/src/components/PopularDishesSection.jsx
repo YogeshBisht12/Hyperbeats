@@ -32,6 +32,7 @@ const PopularDishesSection = () => {
                 src={dish.img}
                 alt={dish.title}
                 className="w-full h-60 object-cover transition-transform duration-300 hover:scale-110 rounded-t-2xl"
+                loading="lazy" // Lazy loading added here
               />
             </div>
             <div className="p-5 text-center">

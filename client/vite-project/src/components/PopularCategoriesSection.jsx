@@ -57,6 +57,7 @@ const PopularCategoriesSection = () => {
                 src={cat.image}
                 alt={cat.title}
                 className="w-full h-28 object-cover transition-transform duration-300 hover:scale-110"
+                loading="lazy" // Lazy loading applied here
               />
             </div>
             <div className="p-3 text-center">

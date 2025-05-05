@@ -1,90 +1,91 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { FiShoppingCart } from "react-icons/fi";
+import { useCart } from "./CartContext"; // ✅ Correct import
 
 const menuItems = [
   {
     id: 1,
     name: "Margherita Pizza",
     category: "Pizza",
-    price: "₹199",
+    price: 199,
     image: "/src/assets/images/pizza1.jpg",
   },
   {
     id: 2,
     name: "Paneer Pizza",
     category: "Pizza",
-    price: "₹249",
+    price: 249,
     image: "/src/assets/images/pizza2.jpg",
   },
   {
     id: 3,
     name: "Sweet corn Pizza",
     category: "Pizza",
-    price: "₹149",
+    price: 149,
     image: "/src/assets/images/pizza3.jpg",
   },
   {
     id: 4,
     name: "Udta Punjab Burger",
     category: "Burgers",
-    price: "₹199",
+    price: 199,
     image: "/src/assets/images/burger1.jpg",
   },
   {
     id: 5,
     name: "Veg Makhani Burger",
     category: "Burgers",
-    price: "₹139",
+    price: 139,
     image: "/src/assets/images/burger2.jpg",
   },
   {
     id: 6,
     name: "Spicy Chicken Burger",
     category: "Burgers",
-    price: "₹199",
+    price: 199,
     image: "/src/assets/images/burger3.jpg",
   },
   {
     id: 7,
     name: "Chocolate Lava Cake",
     category: "Desserts",
-    price: "₹209",
+    price: 209,
     image: "/src/assets/images/dessert1.jpg",
   },
   {
     id: 8,
     name: "Chocolate Truffle Cake",
     category: "Desserts",
-    price: "₹519",
+    price: 519,
     image: "/src/assets/images/dessert2.jpg",
   },
   {
     id: 9,
     name: "Red Velvet Cake",
     category: "Desserts",
-    price: "₹564",
+    price: 564,
     image: "/src/assets/images/dessert3.jpg",
   },
   {
     id: 10,
     name: "Coca Cola",
     category: "Drinks",
-    price: "₹66",
+    price: 66,
     image: "/src/assets/images/drink1.jpg",
   },
   {
     id: 11,
     name: "Thums Up",
     category: "Drinks",
-    price: "₹66",
+    price: 66,
     image: "/src/assets/images/drink2.jpg",
   },
   {
     id: 12,
     name: "Mango juice",
     category: "Drinks",
-    price: "₹66",
+    price: 66,
     image: "/src/assets/images/drink3.jpg",
   },
 ];
@@ -96,6 +97,7 @@ export default function BrowseMenu() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const sectionRef = useRef(null);
   const itemsRef = useRef([]);
+  const { addToCart } = useCart(); // ✅ useCart hook
 
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory =
@@ -126,7 +128,11 @@ export default function BrowseMenu() {
         ease: "power2.out",
       }
     );
-  }, [filteredItems]);
+  }, [selectedCategory, search]);
+
+  const handleAddToCart = (item) => {
+    addToCart(item); // ✅ Safe wrapper method
+  };
 
   return (
     <section
@@ -176,6 +182,7 @@ export default function BrowseMenu() {
               className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-[1.03]"
             >
               <div className="overflow-hidden group">
+                
                 <img
                   src={item.image}
                   alt={item.name}
@@ -186,8 +193,11 @@ export default function BrowseMenu() {
                 <h3 className="text-lg font-semibold text-gray-800">
                   {item.name}
                 </h3>
-                <p className="text-orange-500 font-bold mt-1">{item.price}</p>
-                <button className="mt-4 flex items-center justify-center w-full bg-orange-500 hover:bg-orange-600 transition-all text-white py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02]">
+                <p className="text-orange-500 font-bold mt-1">₹{item.price}</p>
+                <button
+                  onClick={() => handleAddToCart(item)}
+                  className="mt-4 flex items-center justify-center w-full bg-orange-500 hover:bg-orange-600 transition-all text-white py-2 rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02]"
+                >
                   <FiShoppingCart className="mr-2" />
                   Add to Cart
                 </button>
